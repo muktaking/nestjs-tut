@@ -7,7 +7,8 @@ export interface User extends mongoose.Document {
   userName: string;
   password: string;
   email: string;
-  district: string;
+  gender: Gender;
+  createdAt: Date;
   role: RolePermitted;
 }
 
@@ -16,20 +17,21 @@ export enum RolePermitted {
   student = 1,
   mentor = 2,
   moderator = 3,
-  coodinator = 4,
+  coordinator = 4,
   admin = 5
 }
-
-export interface jwtPayload {
-  email: string;
+export enum Gender {
+    male = 'male',
+    female = 'female'
 }
 
 export const UserSchema = new mongoose.Schema({
-  firstName: { type: String, required: true, minlength: 1, maxlength: 15 },
+  firstName: { type: String, required: true, maxlength: 15 },
   lastName: { type: String, required: false, maxlength: 15 },
-  userName: { type: String, required: true, minlength: 1, maxlength: 15 },
+  userName: { type: String, required: true, maxlength: 15 },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  district: { type: String, required: true },
+  gender: { type: String,enum: ['male','female'] ,required: true },
+  createdAt: {type: Date, default: Date.now()},
   role: { type: Number, enum: [0, 1, 2, 3, 4, 5], required: true, default: 1 }
 });

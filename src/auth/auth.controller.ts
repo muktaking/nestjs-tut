@@ -6,32 +6,40 @@ import {
   UseGuards,
   Req
 } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { createUserDto } from "./dto/create-user.dto";
 import { AuthGuard } from "@nestjs/passport";
-import { User } from "./auth.model";
+
+import { AuthService } from "./auth.service";
+import { createUserDto } from "../users/dto/create-user.dto";
+import { User } from "../users/user.model";
 import { GetUser } from "./get-user.decorator";
+import { UsersService } from "src/users/users.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService
+  ) {}
 
   @Post("/registration")
   async signUp(@Body(ValidationPipe) createUserDto: createUserDto) {
-    return await this.authService.createUser(createUserDto);
+    return await this.usersService.createUser(createUserDto);
   }
 
+  @UseGuards(AuthGuard("local"))
   @Post("/login")
-  async signIn(
-    @Body("email", ValidationPipe) email: string,
-    @Body("password", ValidationPipe) password: string
+  async logIn(
+    // @Body("email", ValidationPipe) email: string,
+    // @Body("password", ValidationPipe) password: string,
+    @Req() req
   ) {
-    return await this.authService.validateUser(email, password);
+    return this.authService.login(req.user);
+    //return await this.usersService.validateUser(email, password);
   }
 
+  @UseGuards(AuthGuard("jwt"))
   @Post("/test")
-  @UseGuards(AuthGuard())
-  test(@GetUser() user: User) {
-    console.log(user);
+  test(@Req() req) {
+    return req.user;
   }
 }

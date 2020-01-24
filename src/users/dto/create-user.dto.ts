@@ -4,8 +4,12 @@ import {
   IsOptional,
   Matches,
   IsString,
-  MaxLength
+  MaxLength,
+  Max,
+  IsEnum
 } from "class-validator";
+import { Gender } from "../user.model";
+import { RolePermitted } from "../user.model";
 
 export class createUserDto {
   @IsString()
@@ -33,7 +37,10 @@ export class createUserDto {
   @IsEmail()
   email: string;
 
-  @IsString()
   @IsNotEmpty()
-  district: string;
+  @IsEnum(["male", "female"])
+  gender: Gender;
+
+  @IsOptional()
+  role: RolePermitted;
 }

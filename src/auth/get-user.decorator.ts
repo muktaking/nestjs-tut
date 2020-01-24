@@ -1,5 +1,5 @@
 import { createParamDecorator } from "@nestjs/common";
-import { User } from "./auth.model";
+import { User } from "../users/user.model";
 
 export const GetUser = createParamDecorator(
   (data, req): User => {
