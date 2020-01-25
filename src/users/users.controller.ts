@@ -1,6 +1,14 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  Req,
+  UnauthorizedException
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { AuthGuard } from "@nestjs/passport";
+import { RolePermitted } from "./user.model";
 
 @Controller("users")
 export class UsersController {
@@ -8,7 +16,10 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard("jwt"))
-  async getAllUsers(): Promise<any> {
+  async getAllUsers(@Req() req): Promise<any> {
+    if (req.user.role !== RolePermitted.admin) {
+      throw new UnauthorizedException();
+    }
     return await this.userService.findAllUsers();
   }
 
